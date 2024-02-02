@@ -1,8 +1,10 @@
 # encoding:utf-8
 
+from ast import Import
 import json
 import time
 from typing import List, Tuple
+from bot.ali.ali_qwen_image import QianwenImage
 
 import openai
 import openai.error
@@ -18,9 +20,11 @@ from common.log import logger
 from common import const
 from config import conf, load_config
 from http import HTTPStatus
+from ali import QianwenImage
+
 import dashscope
 
-class AliQwenBot(Bot):
+class AliQwenBot(Bot, QianwenImage):
     def __init__(self):
         super().__init__()
         self.api_key_expired_time = self.set_api_key()
