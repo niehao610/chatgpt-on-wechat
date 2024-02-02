@@ -17,6 +17,8 @@ from bridge.reply import Reply, ReplyType
 from common.log import logger
 from common import const
 from config import conf, load_config
+from http import HTTPStatus
+import dashscope
 
 class AliQwenBot(Bot):
     def __init__(self):
@@ -65,6 +67,7 @@ class AliQwenBot(Bot):
             elif query == "#更新配置":
                 load_config()
                 reply = Reply(ReplyType.INFO, "配置已更新")
+                
             if reply:
                 return reply
             session = self.sessions.session_query(query, session_id)
@@ -88,11 +91,11 @@ class AliQwenBot(Bot):
                 reply = Reply(ReplyType.ERROR, reply_content["content"])
                 logger.debug("[QWEN] reply {} used 0 tokens.".format(reply_content))
             return reply
-
         else:
             reply = Reply(ReplyType.ERROR, "Bot不支持处理{}类型的消息".format(context.type))
             return reply
 
+        
     def reply_text(self, session: AliQwenSession, retry_count=0) -> dict:
         """
         call bailian's ChatCompletion to get the answer
@@ -101,12 +104,60 @@ class AliQwenBot(Bot):
         :return: {}
         """
         try:
-            prompt, history = self.convert_messages_format(session.messages)
-            self.update_api_key_if_expired()
-            # NOTE 阿里百炼的call()函数未提供temperature参数，考虑到temperature和top_p参数作用相同，取两者较小的值作为top_p参数传入，详情见文档 https://help.aliyun.com/document_detail/2587502.htm
-            response = broadscope_bailian.Completions().call(app_id=self.app_id(), prompt=prompt, history=history, top_p=min(self.temperature(), self.top_p()))
-            completion_content = self.get_completion_content(response, self.node_id())
-            completion_tokens, total_tokens = self.calc_tokens(session.messages, completion_content)
+            msg = [
+                {
+                    "role":  "user",
+                    "content": [
+                        {"text": session.lastmsg}
+                    ]
+                }
+            ]
+            
+            dashscope.api_key = "sk-a0a4e4cf170b462bbc0f340f118ebc14"
+            response = dashscope.MultiModalConversation.call(model='qwen-vl-plus',  messages=msg)
+            
+
+            # The response status_code is HTTPStatus.OK indicate success,
+            # otherwise indicate request is failed, you can get error code
+            # and message from code and message.
+#{#
+            #            "status_code": 200,
+            #            "request_id": "f88e12ef-81f5-946e-8c36-5b5a5f97f143",
+            ##            "code": "",
+            #            "message": "",
+            #             "output": {
+            #                 "text": null,
+            #                 "finish_reason": null,
+            #                 "choices": [
+            #                         {
+            #                                 "finish_reason": "stop",
+            #                                 "message": {
+            #                                         "role": "assistant",
+            #                                         "content": [
+            #                                                 {
+            #                                                         "text": "我是来自阿里云的大规模语言模型，我叫通义千问。作为一个AI助手，我的目标是帮助用户获得准确、有用的信息，解决他们的问题 和困惑。我会不断学习和进步，不断提升自己的能力，为用户提供更好的服务。如果您有任何问题或需要帮助，请随时告诉我，我会尽力提供支持。"
+            #                                                 }
+            #                                         ]
+            #                                 }
+            #                         }
+            #                 ]
+            #         },
+            #         "usage": {
+            #                 "input_tokens": 22,
+            #                 "output_tokens": 67
+            #         }
+            # }
+            total_tokens = 0
+            completion_tokens = 0
+            completion_content = ""
+            
+            if response.status_code == HTTPStatus.OK:
+                if len(response.output.choices) > 0:
+                    if len(response.output.choices[0].message.content) > 0:
+                        completion_content = response.output.choices[0].message.content[0]["text"]
+                        total_tokens = response.usage.input_tokens + response.usage.output_tokens
+                        completion_tokens = response.usage.output_tokens
+                
             return {
                 "total_tokens": total_tokens,
                 "completion_tokens": completion_tokens,
@@ -146,9 +197,12 @@ class AliQwenBot(Bot):
                 return result
 
     def set_api_key(self):
-        api_key, expired_time = self.api_key_client().create_token(agent_key=self.agent_key())
-        broadscope_bailian.api_key = api_key
-        return expired_time
+        broadscope_bailian.api_key = "12345678"
+        return time.time() + 864000
+    
+        # api_key, expired_time = self.api_key_client().create_token(agent_key=self.agent_key())
+        # broadscope_bailian.api_key = api_key
+        # return expired_time
 
     def update_api_key_if_expired(self):
         if time.time() > self.api_key_expired_time:

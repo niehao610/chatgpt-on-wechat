@@ -6,6 +6,7 @@ from config import conf
 class Session(object):
     def __init__(self, session_id, system_prompt=None):
         self.session_id = session_id
+        self.lastmsg = ""
         self.messages = []
         if system_prompt is None:
             self.system_prompt = conf().get("character_desc", "")
@@ -23,6 +24,7 @@ class Session(object):
 
     def add_query(self, query):
         user_item = {"role": "user", "content": query}
+        self.lastmsg = query
         self.messages.append(user_item)
 
     def add_reply(self, reply):

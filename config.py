@@ -16,7 +16,7 @@ available_setting = {
     "open_ai_api_base": "https://api.openai.com/v1",
     "proxy": "",  # openai使用的代理
     # chatgpt模型， 当use_azure_chatgpt为true时，其名称为Azure上model deployment名称
-    "model": "gpt-3.5-turbo",  # 还支持 gpt-4, gpt-4-turbo, wenxin, xunfei, qwen
+    "model": "qwen",  # 还支持 gpt-3.5-turbo gpt-4, gpt-4-turbo, wenxin, xunfei, qwen
     "use_azure_chatgpt": False,  # 是否使用azure的chatgpt
     "azure_deployment_id": "",  # azure 模型部署名称
     "azure_api_version": "",  # azure api版本
@@ -68,10 +68,10 @@ available_setting = {
     "claude_api_cookie": "",
     "claude_uuid": "",
     # 通义千问API, 获取方式查看文档 https://help.aliyun.com/document_detail/2587494.html
-    "qwen_access_key_id": "",
-    "qwen_access_key_secret": "",
-    "qwen_agent_key": "",
-    "qwen_app_id": "",
+    "qwen_access_key_id": "LTAI5tCRXN22T2pKMvFjyyD8",
+    "qwen_access_key_secret": "CbZy745SVYIPbnEiL7SkmkStixzkTG",
+    "qwen_agent_key": "sk-a0a4e4cf170b462bbc0f340f118ebc14",
+    "qwen_app_id": "38176",
     "qwen_node_id": "",  # 流程编排模型用到的id，如果没有用到qwen_node_id，请务必保持为空字符串
     # Google Gemini Api Key
     "gemini_api_key": "",
