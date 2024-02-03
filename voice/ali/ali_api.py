@@ -20,6 +20,8 @@ import uuid
 
 from common.log import logger
 from common.tmp_dir import TmpDir
+import dashscope
+from dashscope.audio.tts import SpeechSynthesizer
 
 
 def text_to_speech_aliyun(url, text, appkey, token):
@@ -35,20 +37,11 @@ def text_to_speech_aliyun(url, text, appkey, token):
     返回值:
     - str: 成功时输出音频文件的路径，否则为None。
     """
-    headers = {
-        "Content-Type": "application/json",
-    }
-
-    data = {
-        "text": text,
-        "appkey": appkey,
-        "token": token,
-        "format": "wav"
-    }
+    dashscope.api_key='sk-a0a4e4cf170b462bbc0f340f118ebc14'
 
     response = requests.post(url, headers=headers, data=json.dumps(data))
 
-    if response.status_code == 200 and response.headers['Content-Type'] == 'audio/mpeg':
+    if result.get_audio_data() is not None:
         output_file = TmpDir().path() + "reply-" + str(int(time.time())) + "-" + str(hash(text) & 0x7FFFFFFF) + ".wav"
 
         with open(output_file, 'wb') as file:

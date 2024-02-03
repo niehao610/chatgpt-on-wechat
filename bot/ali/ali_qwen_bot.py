@@ -20,7 +20,7 @@ from common.log import logger
 from common import const
 from config import conf, load_config
 from http import HTTPStatus
-from ali import QianwenImage
+from bot.ali.ali_qwen_image import QianwenImage
 
 import dashscope
 

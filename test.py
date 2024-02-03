@@ -21,6 +21,7 @@ from common import const
 from config import conf, load_config
 from http import HTTPStatus
 import dashscope
+from dashscope.audio.tts import SpeechSynthesizer
 
 
 def simple_multimodal_conversation_call():
@@ -65,6 +66,21 @@ def TestBot():
     # Create a session
 
 
+def TestSpeach():
+
+    dashscope.api_key='sk-a0a4e4cf170b462bbc0f340f118ebc14'
+
+    result = SpeechSynthesizer.call(model='sambert-zhiyuan-v1',
+                                    text='今天天气怎么样,我们一起出去玩吧',
+                                    sample_rate=48000,
+                                    format='wav')
+
+    if result.get_audio_data() is not None:
+        with open('D:\\py_project\\chatgpt-on-wechat\\output-sambert-zhiyuan-v1.wav', 'wb') as f:
+            f.write(result.get_audio_data())
+    print('  get response: %s' % (result.get_response()))
+
 if __name__ == '__main__':
     #simple_multimodal_conversation_call()
-    TestBot()
+    #TestBot()
+    TestSpeach()
