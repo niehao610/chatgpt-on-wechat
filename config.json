@@ -13,6 +13,7 @@
     "hot_reload": false,
     "single_chat_prefix": [
         "bot",
+        "小福",
         "@bot"
     ],
     "single_chat_reply_prefix": "[bot] ",

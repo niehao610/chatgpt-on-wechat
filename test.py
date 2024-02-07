@@ -53,10 +53,10 @@ def simple_multimodal_conversation_call():
     
     dashscope.api_key = "sk-a0a4e4cf170b462bbc0f340f118ebc14"
     response = dashscope.Generation.call(
-        model='qwen-max-1201',
-        messages=messages,
-        result_format='message',
-                                                     )
+            model='qwen-max-1201',
+            messages=messages,
+            result_format='message',
+        )
     
     # The response status_code is HTTPStatus.OK indicate success,
     # otherwise indicate request is failed, you can get error code
@@ -100,6 +100,6 @@ def TestSpeach():
     print('  get response: %s' % (result.get_response()))
 
 if __name__ == '__main__':
-    simple_multimodal_conversation_call()
-    #TestBot()
+    #simple_multimodal_conversation_call()
+    TestBot()
     #TestSpeach()
