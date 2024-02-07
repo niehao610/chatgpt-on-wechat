@@ -53,7 +53,7 @@ class AliVoice(Voice):
                       r'äöüÄÖÜáéíóúÁÉÍÓÚàèìòùÀÈÌÒÙâêîôûÂÊÎÔÛçÇñÑ，。！？,.]', '', text)
         # 提取有效的token
         token_id = ""
-        fileName = text_to_speech_aliyun(self.api_url, text, self.app_key, token_id)
+        fileName = text_to_speech_aliyun("", text, "","")
         if fileName:
             logger.info("[Ali] textToVoice text={} voice file name={}".format(text, fileName))
             reply = Reply(ReplyType.VOICE, fileName)

@@ -109,6 +109,13 @@ class AliQwenBot(Bot, QianwenImage):
         """
         try:
             msg = [
+                {'role': 'system', 'content': 'You are a helpful assistant.'},
+                {'role': 'user', 'content': '你叫什么名字'},
+                {'role': 'assistant', 'content': '你好，我叫小福.'},
+                {'role': 'user', 'content': '介绍一下你自己.'},
+                {'role': 'assistant', 'content': '你好，我叫小福， 我可以给你提供各种的线上问题解答,比如提供2024年12生肖运势预测，12星座的运势预测，帮您解太岁、化太岁，以能解答福禄寿喜财，以及各路财神。'},    
+                {'role': 'user', 'content': '我想了解一下我今年的财运和事业.'},
+                {'role': 'assistant', 'content': '你好，今年是龙年，您可以供奉龙五爷财神，你可以联系一下我们的慧净师傅，他会根据您的情况给您更仔细的分析和解答，慧净师傅的联系方式是 微信号:123456789'}, 
                 {
                     "role":  "user",
                     "content": [
@@ -118,7 +125,7 @@ class AliQwenBot(Bot, QianwenImage):
             ]
             
             dashscope.api_key = "sk-a0a4e4cf170b462bbc0f340f118ebc14"
-            response = dashscope.MultiModalConversation.call(model='qwen-vl-plus',  messages=msg)
+            response = dashscope.MultiModalConversation.call(model='qwen-max-longcontext',  messages=msg)
             
 
             # The response status_code is HTTPStatus.OK indicate success,

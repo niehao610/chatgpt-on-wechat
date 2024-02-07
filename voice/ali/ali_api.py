@@ -39,7 +39,10 @@ def text_to_speech_aliyun(url, text, appkey, token):
     """
     dashscope.api_key='sk-a0a4e4cf170b462bbc0f340f118ebc14'
 
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    result = SpeechSynthesizer.call(model='sambert-zhiyuan-v1',
+                                    text=text,
+                                    sample_rate=48000,
+                                    format='wav')
 
     if result.get_audio_data() is not None:
         output_file = TmpDir().path() + "reply-" + str(int(time.time())) + "-" + str(hash(text) & 0x7FFFFFFF) + ".wav"
