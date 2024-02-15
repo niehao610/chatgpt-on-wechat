@@ -11,6 +11,7 @@ Description:
 import json
 import time
 import requests
+from http import HTTPStatus
 import datetime
 import hashlib
 import hmac
@@ -22,7 +23,8 @@ from common.log import logger
 from common.tmp_dir import TmpDir
 import dashscope
 from dashscope.audio.tts import SpeechSynthesizer
-
+from dashscope.audio.asr import Recognition
+import oss2
 
 def text_to_speech_aliyun(url, text, appkey, token):
     """
@@ -39,6 +41,7 @@ def text_to_speech_aliyun(url, text, appkey, token):
     """
     dashscope.api_key='sk-a0a4e4cf170b462bbc0f340f118ebc14'
 
+    logger.info("text [{}] to voice".format(text))
     result = SpeechSynthesizer.call(model='sambert-zhiyuan-v1',
                                     text=text,
                                     sample_rate=48000,
@@ -48,15 +51,58 @@ def text_to_speech_aliyun(url, text, appkey, token):
         output_file = TmpDir().path() + "reply-" + str(int(time.time())) + "-" + str(hash(text) & 0x7FFFFFFF) + ".wav"
 
         with open(output_file, 'wb') as file:
-            file.write(response.content)
+            file.write(result.get_audio_data())
         logger.debug(f"音频文件保存成功，文件名：{output_file}")
     else:
-        logger.debug("响应状态码: {}".format(response.status_code))
-        logger.debug("响应内容: {}".format(response.text))
+        logger.debug("响应状态码: {}".format(result.get_response()))
         output_file = None
 
     return output_file
 
+def upload_file_2_ali_oss(file_path, file_name, api_key_id, api_key_sec):
+    """
+    上传文件到阿里云OSS。
+
+    参数:
+    - file_path (str): 要上传的文件的本地路径。
+    - file_name (str): 上传到OSS后的文件名。
+
+    返回值:
+    - str: 上传成功时返回文件的URL，否则为None。
+    """
+    endpoint = 'http://oss-cn-shenzhen.aliyuncs.com'
+    auth = oss2.Auth(api_key_id,api_key_sec)
+    bucket = oss2.Bucket(auth, endpoint, 'xiaofu-bot')
+    oss2.resumable_upload(bucket,file_name, file_path)
+    return  endpoint+"/"+file_name
+                          
+def speech_to_text_aliyun(voicefile):
+    """
+    使用阿里云的文本转语音服务将文本转换为语音。
+
+    参数:
+    - url (str): 阿里云文本转语音服务的端点URL。
+    - text (str): 要转换为语音的文本。
+    - appkey (str): 您的阿里云appkey。
+    - token (str): 阿里云API的认证令牌。
+
+    返回值:
+    - str: 成功时输出音频文件的路径，否则为None。
+    """
+    dashscope.api_key='sk-a0a4e4cf170b462bbc0f340f118ebc14'
+    recognition = Recognition(model='paraformer-realtime-v1',
+                          format='wav',
+                          sample_rate=16000,
+                          callback=None)
+    result = recognition.call(voicefile)
+    text = ""
+    if result.status_code == HTTPStatus.OK:
+        with open('asr_result.txt', 'w+') as f:
+            for sentence in result.get_sentence():
+                text = text + str(sentence) + '\n'       
+    else:
+         logger.warn("speech_to_text_aliyun err: %s" %  result.message)
+    return text
 
 class AliyunTokenGenerator:
     """
