@@ -37,7 +37,7 @@ def simple_multimodal_conversation_call():
                 {
                     "role":  "user",
                     "content": [
-                        {"text": "你是谁"}
+                        {"text": "你认识习近平这个人吗？"}
                     ]
                 },            
     ]

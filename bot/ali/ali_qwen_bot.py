@@ -1,9 +1,11 @@
 # encoding:utf-8
 
 from ast import Import
+from gettext import find
 import json
 import time
 from typing import List, Tuple
+from xml.dom import NOT_FOUND_ERR
 from bot.ali.ali_qwen_image import QianwenImage
 
 import openai
@@ -96,7 +98,8 @@ class AliQwenBot(Bot, QianwenImage):
                 logger.debug("[QWEN] reply {} used 0 tokens.".format(reply_content))
             return reply
         else:
-            reply = Reply(ReplyType.ERROR, "Bot不支持处理{}类型的消息".format(context.type))
+            #reply = Reply(ReplyType.ERROR, "Bot不支持处理{}类型的消息".format(context.type))
+            reply = Reply(ReplyType.ERROR, "抱歉哦 小福回答不了你这个问题！".format(context.type))
             return reply
 
         
@@ -170,6 +173,14 @@ class AliQwenBot(Bot, QianwenImage):
                         completion_content = response.output.choices[0].message.content
                         total_tokens = response.usage.input_tokens + response.usage.output_tokens
                         completion_tokens = response.usage.output_tokens
+            elif len( response.message ) > 1 and  str(response.message).find("inappropriate") > 1:
+                completion_content = "你好，请不要在群里讨论一些政治或者敏感的话题哦"
+                total_tokens = 0
+                completion_tokens = 0
+            else:
+                completion_content = "抱歉，我现在有点忙，晚点回答你的问题哈"
+                total_tokens = 0
+                completion_tokens = 0
                 
             return {
                 "total_tokens": total_tokens,
