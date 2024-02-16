@@ -175,12 +175,12 @@ class AliQwenBot(Bot, QianwenImage):
                         completion_tokens = response.usage.output_tokens
             elif len( response.message ) > 1 and  str(response.message).find("inappropriate") > 1:
                 completion_content = "你好，请不要在群里讨论一些政治或者敏感的话题哦"
-                total_tokens = 0
-                completion_tokens = 0
+                total_tokens = 1
+                completion_tokens = 1
             else:
                 completion_content = "抱歉，我现在有点忙，晚点回答你的问题哈"
-                total_tokens = 0
-                completion_tokens = 0
+                total_tokens =1
+                completion_tokens = 1
                 
             return {
                 "total_tokens": total_tokens,
