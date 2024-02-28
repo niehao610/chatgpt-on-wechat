@@ -155,6 +155,8 @@ available_setting = {
     "linkai_api_key": "",
     "linkai_app_code": "",
     "linkai_api_base": "https://api.link-ai.chat",  # linkAI服务地址，若国内无法访问或延迟较高可改为 https://api.link-ai.tech
+    "oneapi_url":"http://127.0.0.1:3000/v1/",
+    "oneapi_api_key":"sk-UlYtNahwqcqNjbmW5aC4B943B8E64737Af3c88Ef4608AcDb",
 }
 
 

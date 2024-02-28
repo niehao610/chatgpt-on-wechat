@@ -9,7 +9,8 @@ from xml.dom import NOT_FOUND_ERR
 from bot.ali.ali_qwen_image import QianwenImage
 
 import openai
-import openai.error
+
+from openai import OpenAI
 
 import broadscope_bailian
 from broadscope_bailian import ChatQaMessage
@@ -22,6 +23,8 @@ from bridge.reply import Reply, ReplyType
 from common.log import logger
 from common import const
 from config import conf, load_config
+import config
+
 from http import HTTPStatus
 from bot.ali.ali_qwen_image import QianwenImage
 
@@ -130,10 +133,13 @@ class AliQwenBot(Bot, QianwenImage):
             #        result_format='message',
             #    )
 
-            base_url = "http://www.jifeng.online:3000/v1/"
-            #client2= OpenAI(api_key="sk-UlYtNahwqcqNjbmW5aC4B943B8E64737Af3c88Ef4608AcDb", base_url=base_url)
+            #base_url = "http://www.jifeng.online:3000/v1/"
+            base_url = conf().get("oneapi_url")
+            api_key = conf().get("oneapi_api_key")
+            client2= OpenAI(api_key=api_key, base_url=base_url)
             
-            response = openai.ChatCompletion.create(
+            response = client2.chat.completions.create(
+
                 model="qwen-turbo",
                 messages=[
                 {"role": "user", "content": session.lastmsg}
@@ -170,18 +176,18 @@ class AliQwenBot(Bot, QianwenImage):
             total_tokens = 0
             completion_tokens = 0
             completion_content = ""
-            #print(response)
+            print(response)
             
-            if response.status_code == HTTPStatus.OK:
-                if len(response.output.choices) > 0:
-                    if len(response.output.choices[0].message.content) > 0:
-                        completion_content = response.output.choices[0].message.content
-                        total_tokens = response.usage.input_tokens + response.usage.output_tokens
-                        completion_tokens = response.usage.output_tokens
-            elif len( response.message ) > 1 and  str(response.message).find("inappropriate") > 1:
-                completion_content = "你好，请不要在群里讨论一些政治或者敏感的话题哦"
-                total_tokens = 1
-                completion_tokens = 1
+            if response :
+                if len(response.choices) > 0:
+                    if len(response.choices[0].message.content) > 0:
+                        completion_content = response.choices[0].message.content
+                        total_tokens = response.usage.completion_tokens + response.usage.prompt_tokens
+                        completion_tokens = response.usage.prompt_tokens
+                elif len( response.message ) > 1 and  str(response.message).find("inappropriate") > 1:
+                    completion_content = "你好，请不要在群里讨论一些政治或者敏感的话题哦"
+                    total_tokens = 1
+                    completion_tokens = 1
             else:
                 completion_content = "抱歉，我现在有点忙，晚点回答你的问题哈"
                 total_tokens =1
@@ -195,22 +201,22 @@ class AliQwenBot(Bot, QianwenImage):
         except Exception as e:
             need_retry = retry_count < 2
             result = {"completion_tokens": 0, "content": "我现在有点累了，等会再来吧"}
-            if isinstance(e, openai.error.RateLimitError):
+            if isinstance(e, openai.RateLimitError):
                 logger.warn("[QWEN] RateLimitError: {}".format(e))
                 result["content"] = "提问太快啦，请休息一下再问我吧"
                 if need_retry:
                     time.sleep(20)
-            elif isinstance(e, openai.error.Timeout):
+            elif isinstance(e, openai.RateLimitError ):
                 logger.warn("[QWEN] Timeout: {}".format(e))
                 result["content"] = "我没有收到你的消息"
                 if need_retry:
                     time.sleep(5)
-            elif isinstance(e, openai.error.APIError):
+            elif isinstance(e, openai.APIError):
                 logger.warn("[QWEN] Bad Gateway: {}".format(e))
                 result["content"] = "请再问我一次"
                 if need_retry:
                     time.sleep(10)
-            elif isinstance(e, openai.error.APIConnectionError):
+            elif isinstance(e, openai.APIConnectionError):
                 logger.warn("[QWEN] APIConnectionError: {}".format(e))
                 need_retry = False
                 result["content"] = "我连接不到你的网络"
