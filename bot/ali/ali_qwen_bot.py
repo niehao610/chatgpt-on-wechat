@@ -136,6 +136,10 @@ class AliQwenBot(Bot, QianwenImage):
             #base_url = "http://www.jifeng.online:3000/v1/"
             base_url = conf().get("oneapi_url")
             api_key = conf().get("oneapi_api_key")
+            
+            logger.warn("[QWEN] base_url: {}".format(base_url))
+            logger.warn("[QWEN] api_key: {}".format(api_key))
+
             client2= OpenAI(api_key=api_key, base_url=base_url)
             
             response = client2.chat.completions.create(
