@@ -1,6 +1,8 @@
 # encoding:utf-8
 
 import os
+os.environ["OPENAI_API_KEY"] = "sk-UlYtNahwqcqNjbmW5aC4B943B8E64737Af3c88Ef4608AcDb"
+
 import signal
 import sys
 
