@@ -10,6 +10,7 @@ from bot.ali.ali_qwen_image import QianwenImage
 
 import openai
 import openai.error
+
 import broadscope_bailian
 from broadscope_bailian import ChatQaMessage
 
@@ -23,6 +24,7 @@ from common import const
 from config import conf, load_config
 from http import HTTPStatus
 from bot.ali.ali_qwen_image import QianwenImage
+
 
 import dashscope
 
@@ -111,31 +113,33 @@ class AliQwenBot(Bot, QianwenImage):
         :return: {}
         """
         try:
-            msg = [
-                {'role': 'system', 'content':[ {"text":'You are a helpful assistant.'}]},
-                {'role': 'user', 'content': [ {"text":'''你的名字叫小福，26岁，毕业于东南大学， 现在工作于德福庄园，你所有回答都要用中文，你所有回答中都不要提及你是AI机器人。如果有人让你介绍自己或者跟你打招呼，你简单回答你叫小福，是一个26岁女孩'''}]},
-                {'role': 'user', 'content': [{"text":'''你提供各种的线上疑难解答,比如提供2024年12生肖运势预测，12星座的运势预测，还可以帮忙解太岁、化太岁，以能解答福禄寿喜财，以及各路财神。
-如果向你询问事业和财富的运势，你可以推荐供奉龙五爷财神，并给出分析，最后可以让我进一步咨询一下慧净禅师，她的联系方式是 18984476632，
-如果向你询问爱情和婚姻的运势，你可以推荐供奉慧通，并给出分析，最后可以让我进一步咨询一下慧净禅师，她的联系方式是 18984476632，
-如果向你询问求子的运势，可以推荐供奉观音菩萨，
-如果向你询问身体和健康的运势，可以推荐祈求药师佛，并给出分析，最后可以让我进一步咨询一下慧净禅师，她的联系方式是 18984476632。
-今年是2024年，是龙年。
-'''}]},
-                {
-                    "role":  "user",
-                    "content": [
-                        {"text": session.lastmsg}
-                    ]
-                }
-            ]
+            # msg = [
+            #     {'role': 'system', 'content':[ {"text":'You are a helpful assistant.'}]},
+            #     {
+            #         "role":  "user",
+            #         "content": [
+            #             {"text": session.lastmsg}
+            #         ]
+            #     }
+            # ]
             
-            dashscope.api_key = "sk-a0a4e4cf170b462bbc0f340f118ebc14"
-            response = dashscope.Generation.call(
-                    model='qwen-max-1201',
-                    messages=msg,
-                    result_format='message',
-                )
+            #dashscope.api_key = "sk-a0a4e4cf170b462bbc0f340f118ebc14"
+            #response = dashscope.Generation.call(
+            #        model='qwen-max-1201',
+            #        messages=msg,
+            #        result_format='message',
+            #    )
 
+            base_url = "http://www.jifeng.online:3000/v1/"
+            #client2= OpenAI(api_key="sk-UlYtNahwqcqNjbmW5aC4B943B8E64737Af3c88Ef4608AcDb", base_url=base_url)
+            
+            response = openai.ChatCompletion.create(
+                model="qwen-turbo",
+                messages=[
+                {"role": "user", "content": session.lastmsg}
+                ]
+            )
+            
             # The response status_code is HTTPStatus.OK indicate success,
             # otherwise indicate request is failed, you can get error code
             # and message from code and message.
@@ -166,7 +170,7 @@ class AliQwenBot(Bot, QianwenImage):
             total_tokens = 0
             completion_tokens = 0
             completion_content = ""
-            print(response)
+            #print(response)
             
             if response.status_code == HTTPStatus.OK:
                 if len(response.output.choices) > 0:

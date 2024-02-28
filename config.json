@@ -15,7 +15,8 @@
     "single_chat_prefix": [
         "bot",
         "小福",
-        "@bot"
+        "@bot",
+        "鸭子"
     ],
     "single_chat_reply_prefix": "[bot] ",
     "group_chat_prefix": [
@@ -23,7 +24,11 @@
     ],
     "group_name_white_list": [
         "bestBot",
-        "AI养老健康群"
+        "AI养老健康群",
+        "深圳吃货小小群",
+        "深圳同学群",
+        "深圳吃货群",
+        "聂家群"
     ],
     "image_create_prefix": [
         "画"
