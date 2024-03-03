@@ -31,7 +31,7 @@ class DingTalkChanel(ChatChannel, dingtalk_stream.ChatbotHandler):
         handler.setFormatter(
             logging.Formatter('%(asctime)s %(name)-8s %(levelname)-8s %(message)s [%(filename)s:%(lineno)d]'))
         logger.addHandler(handler)
-        logger.setLevel(logging.INFO)
+        logger.setLevel(logging.DEBUG)
         return logger
 
     def __init__(self):

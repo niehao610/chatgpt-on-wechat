@@ -119,7 +119,7 @@ class WechatyChannel(ChatChannel):
         except Exception as e:
             logger.exception("[WX] {}".format(e))
             return
-        logger.debug("[WX] message:{}".format(cmsg))
+        logger.info("[WX] message:{}".format(cmsg))
         room = msg.room()  # 获取消息来自的群聊. 如果消息不是来自群聊, 则返回None
         isgroup = room is not None
         ctype = cmsg.ctype
