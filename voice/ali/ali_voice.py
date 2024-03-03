@@ -55,7 +55,9 @@ class AliVoice(Voice):
                       r'äöüÄÖÜáéíóúÁÉÍÓÚàèìòùÀÈÌÒÙâêîôûÂÊÎÔÛçÇñÑ，。！？,.]', '', text)
         # 提取有效的token
         token_id = ""
+        
         fileName = text_to_speech_aliyun("", text, "","")
+        
         if fileName:
             logger.info("[Ali] textToVoice text={} voice file name={}".format(text, fileName))
             reply = Reply(ReplyType.VOICE, fileName)
@@ -70,8 +72,8 @@ class AliVoice(Voice):
         logger.info("[ALI] voice file name={}".format(voice_file))
         try:
             text = speech_to_text_aliyun(voice_file)
+            logger.info("[ALI] speech_to_text_aliyun resp {} voice file name={}".format(text , voice_file))
             reply = Reply(ReplyType.TEXT, text)
-            logger.info("[ALI] voiceToText text={} voice file name={}".format(text, voice_file))
         except Exception as e:
             logger.warn("[ALI] voiceToText failed: %s" % e)
             reply = Reply(ReplyType.ERROR, "我暂时还无法听清您的语音，请稍后再试吧~")

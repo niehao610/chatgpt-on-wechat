@@ -96,10 +96,10 @@ def speech_to_text_aliyun(voicefile):
                           callback=None)
     result = recognition.call(voicefile)
     text = ""
+    logger.info("[Ali Voice] recognition resp:{}".format(result))
     if result.status_code == HTTPStatus.OK:
-        with open('asr_result.txt', 'w+') as f:
             for sentence in result.get_sentence():
-                text = text + str(sentence) + '\n'       
+                text = text + str(sentence['text'])       
     else:
          logger.warn("speech_to_text_aliyun err: %s" %  result.message)
     return text
