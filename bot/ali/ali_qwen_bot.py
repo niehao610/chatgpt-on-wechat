@@ -36,6 +36,9 @@ class AliQwenBot(Bot, QianwenImage):
         super().__init__()
         self.api_key_expired_time = self.set_api_key()
         self.sessions = SessionManager(AliQwenSession, model=conf().get("model", const.QWEN))
+        self.from_nick_name = ""
+        self.to_nick_name = ""        
+        self.group_name = ""
 
     def api_key_client(self):
         return broadscope_bailian.AccessTokenClient(access_key_id=self.access_key_id(), access_key_secret=self.access_key_secret())
@@ -63,6 +66,15 @@ class AliQwenBot(Bot, QianwenImage):
 
     def reply(self, query, context=None):
         # acquire reply content
+        if context["msg"].is_group:
+            self.from_nick_name = context["msg"].actual_user_nickname
+            self.to_nick_name = context["msg"].to_user_nickname
+            self.group_name = context["msg"].from_user_nickname
+        else:
+            self.from_nick_name = context["msg"].from_user_nickname
+            self.to_nick_name = context["msg"].to_user_nickname
+            self.group_name = ""
+
         if context.type == ContextType.TEXT:
             logger.info("[QWEN] query={}".format(query))
 
@@ -147,7 +159,13 @@ class AliQwenBot(Bot, QianwenImage):
                 model="qwen-turbo",
                 messages=[
                 {"role": "user", "content": session.lastmsg}
-                ]
+                ],
+                
+                extra_query = {
+                    "fname" : self.from_nick_name,
+                     "tname": self.to_nick_name,
+                     "gname": self.group_name
+                    }
             )
             
             # The response status_code is HTTPStatus.OK indicate success,
