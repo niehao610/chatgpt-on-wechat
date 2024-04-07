@@ -44,6 +44,6 @@
     "use_linkai": false,
     "linkai_api_key": "",
     "linkai_app_code": "",
-    "oneapi_url":"http://127.0.0.1:3000/v1/",
+    "oneapi_url":"http://www.jifeng.online:3000/v1/",
     "oneapi_api_key":"sk-UlYtNahwqcqNjbmW5aC4B943B8E64737Af3c88Ef4608AcDb"
 }

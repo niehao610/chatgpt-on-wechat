@@ -201,15 +201,16 @@ class AliQwenBot(Bot, QianwenImage):
             print(response)
             
             if response :
-                if len(response.choices) > 0:
-                    if len(response.choices[0].message.content) > 0:
-                        completion_content = response.choices[0].message.content
-                        total_tokens = response.usage.completion_tokens + response.usage.prompt_tokens
-                        completion_tokens = response.usage.prompt_tokens
-                elif len( response.message ) > 1 and  str(response.message).find("inappropriate") > 1:
-                    completion_content = "你好，请不要在群里讨论一些政治或者敏感的话题哦"
-                    total_tokens = 1
-                    completion_tokens = 1
+                if response.choices:
+                    if len(response.choices) > 0:
+                        if len(response.choices[0].message.content) > 0:
+                            completion_content = response.choices[0].message.content
+                            total_tokens = response.usage.completion_tokens + response.usage.prompt_tokens
+                            completion_tokens = response.usage.prompt_tokens
+                    elif len( response.message ) > 1 and  str(response.message).find("inappropriate") > 1:
+                        completion_content = "你好，请不要在群里讨论一些政治或者敏感的话题哦"
+                        total_tokens = 1
+                        completion_tokens = 1
             else:
                 completion_content = "抱歉，我现在有点忙，晚点回答你的问题哈"
                 total_tokens =1
@@ -222,7 +223,7 @@ class AliQwenBot(Bot, QianwenImage):
             }
         except Exception as e:
             need_retry = retry_count < 2
-            result = {"completion_tokens": 0, "content": "我现在有点累了，等会再来吧"}
+            result = {"total_tokens":25, "completion_tokens": 10, "content": "不好意思，现在有点事，晚点跟你说"}
             if isinstance(e, openai.RateLimitError):
                 logger.warn("[QWEN] RateLimitError: {}".format(e))
                 result["content"] = "提问太快啦，请休息一下再问我吧"
