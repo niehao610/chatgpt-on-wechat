@@ -9,9 +9,9 @@ import json
 import os
 import threading
 import time
-
+import random
 import requests
-
+import re
 from bridge.context import *
 from bridge.reply import *
 from channel.chat_channel import ChatChannel
@@ -204,9 +204,47 @@ class WechatChannel(ChatChannel):
         receiver = context["receiver"]
         if reply.type == ReplyType.TEXT:
             v = str(reply.content).replace("[bot]","")
-            reply.content = v
-            itchat.send(reply.content, toUserName=receiver)
-            logger.info("[WX] sendMsg={}, receiver={}".format(reply, receiver))
+            ss2 = str(v).split("\n\n")
+            msg = ""
+            #pattern = r'\'#*?\d\.'
+            pattern = r"[#-*]"
+            if len(ss2) > 1:
+                for s in ss2:
+                    if len(s) > 3:
+                        msg = msg + "\n" + s
+                        if len(msg) < 15:
+                            continue
+                        resultMsg = re.sub(pattern, ' ', msg)
+                        reply.content = resultMsg.strip()
+                        itchat.send(reply.content, toUserName=receiver)
+                        logger.info("[WX] sendMsg={}, receiver={}".format(reply, receiver))
+                        msg = ""
+                        random_float = random.uniform(3, 5)
+                        time.sleep(random_float)
+            else:
+                ss2 = str(v).split("。")
+                for s in ss2:
+                    if len(s) > 3:
+                        msg = msg  + s
+                        if len(msg) < 15:
+                            continue
+                        resultMsg = re.sub(pattern, ' ', msg)
+                        reply.content = resultMsg.strip()
+                        itchat.send(reply.content, toUserName=receiver)
+                        logger.info("[WX] sendMsg={}, receiver={}".format(reply, receiver))
+                        msg = ""
+                        random_float = random.uniform(3, 5)
+                        time.sleep(random_float)
+                
+            if len(msg) > 3:            
+                resultMsg = re.sub(pattern, ' ', msg)
+                reply.content = resultMsg.strip()
+                itchat.send(reply.content, toUserName=receiver)
+                logger.info("[WX] sendMsg={}, receiver={}".format(reply, receiver))   
+                
+            #reply.content = v
+            #itchat.send(reply.content, toUserName=receiver)
+            #logger.info("[WX] sendMsg={}, receiver={}".format(reply, receiver))
         elif reply.type == ReplyType.ERROR or reply.type == ReplyType.INFO:
             itchat.send(reply.content, toUserName=receiver)
             logger.info("[WX] sendMsg={}, receiver={}".format(reply, receiver))

@@ -21,8 +21,8 @@ available_setting = {
     "azure_deployment_id": "",  # azure 模型部署名称
     "azure_api_version": "",  # azure api版本
     # Bot触发配置
-    "single_chat_prefix": ["bot", "@bot"],  # 私聊时文本需要包含该前缀才能触发机器人回复
-    "single_chat_reply_prefix": "[bot] ",  # 私聊时自动回复的前缀，用于区分真人
+    "single_chat_prefix": [""],  # 私聊时文本需要包含该前缀才能触发机器人回复
+    "single_chat_reply_prefix": "",  # 私聊时自动回复的前缀，用于区分真人
     "single_chat_reply_suffix": "",  # 私聊时自动回复的后缀，\n 可以换行
     "group_chat_prefix": ["@bot"],  # 群聊时包含该前缀则会触发机器人回复
     "group_chat_reply_prefix": "",  # 群聊时自动回复的前缀
@@ -118,7 +118,7 @@ available_setting = {
     "wechatmp_app_secret": "",  # 微信公众平台的appsecret
     "wechatmp_aes_key": "",  # 微信公众平台的EncodingAESKey，加密模式需要
     # wechatcom的通用配置
-    "wechatcom_corp_id": "",  # 企业微信公司的corpID
+    "wechatcom_corp_id": "ww4448da28801fb7ce",  # 企业微信公司的corpID
     # wechatcomapp的配置
     "wechatcomapp_token": "",  # 企业微信app的token
     "wechatcomapp_port": 9898,  # 企业微信app的服务端口,不需要端口转发

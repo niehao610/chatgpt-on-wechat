@@ -12,15 +12,8 @@
     "text_to_voice": "ali",
     "proxy": "",
     "hot_reload": false,
-    "single_chat_prefix": [
-        "bot",
-        "小福",
-        "小服",
-        "小胡",
-        "@bot",
-        "鸭子"
-    ],
-    "single_chat_reply_prefix": "[bot] ",
+    "single_chat_prefix": [],
+    "single_chat_reply_prefix": "[bot]",
     "group_chat_prefix": [
         "bot",
         "小福",
